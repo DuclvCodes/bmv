@@ -1,0 +1,9 @@
+.container-material-setting {
+  padding: 20px 40px;
+}
+
+.icon-plus {
+  font-size: 20px;
+  margin-left: 20px;
+  cursor: pointer;
+}

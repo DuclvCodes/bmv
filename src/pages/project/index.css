@@ -1,0 +1,48 @@
+.header-project {
+  background: #DDDDDD;
+  padding: 20px 40px;
+}
+
+.select-subject {
+  width: 200px;
+  display: inline-block;
+}
+
+.main-project {
+  margin-top: 10px;
+}
+
+.main-project-left {
+  background: #F3F3F3;
+}
+
+.menu-header {
+  padding: 20px 0 40px 40px;
+  border-bottom: 1px solid #D4D4D4;
+}
+
+.menu-collapse {
+  margin-top: -5px;
+  margin-right: 10px;
+  background: #D0D0D0;
+}
+
+.menu-collapse:active, .menu-collapse:hover {
+  background: #D0D0D0;
+}
+
+.setting {
+  background: #C4C4C4;
+  padding-bottom: 5px;
+}
+
+.setting-header {
+  padding: 20px 10px;
+  border-bottom: 1px solid #9D9D9D;
+}
+
+.setting-items {
+  background: #E2E2E2;
+  padding: 5px;
+  margin: 10px;
+}
