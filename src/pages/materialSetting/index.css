@@ -2,8 +2,46 @@
   padding: 20px 40px;
 }
 
-.icon-plus {
-  font-size: 20px;
-  margin-left: 20px;
+/*.icon-plus {*/
+/*  font-size: 20px;*/
+/*  margin-left: 20px;*/
+/*  cursor: pointer;*/
+/*}*/
+
+/*.paramChildren {*/
+/*  border: 1px solid #3393DD;*/
+/*  padding: 10px 10px 0 10px;*/
+/*}*/
+
+.panel-material-setting {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.panel-setting {
+  width: 300px;
+  margin-bottom: 30px;
+  border: 1px solid #003B99;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.panel-setting-header {
+  color: #FFFFFF;
+  padding: 8px;
+  background: #003B99;
+}
+
+.panel-setting-body {
+  padding: 8px;
+}
+
+.icon-close {
+  color: #BEC6D0;
+  font-size: 14px;
   cursor: pointer;
+}
+
+.icon-close:hover {
+  color: #0062FF;
 }

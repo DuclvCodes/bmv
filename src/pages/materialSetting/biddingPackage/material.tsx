@@ -9,12 +9,16 @@ const Material = () => {
   const initParameterSetting = {
     filter: 1,
     childrenFilter: [1],
-    settings: {
-      inputParameter: 'Diện tích ván khuôn',
-      selectParameter: 1,
-      parameter: 1,
-      unit: 1,
-    }
+    settings: [
+      {
+        key: 1,
+        inputParameter: 'Diện tích ván khuôn',
+        selectParameter: 1,
+        parameter: 1,
+        unit: 1,
+        children: []
+      }
+    ]
   };
   const [selectedBusiness, setSelectedBusiness] = useState(1);
   const [selectedMaterial, setSelectedMaterial] = useState([]);
@@ -54,12 +58,16 @@ const Material = () => {
     newParameter.push({
       filter: 1,
       childrenFilter: [1],
-      settings: {
-        inputParameter: '',
-        selectParameter: 1,
-        parameter: 1,
-        unit: 1,
-      }
+      settings: [
+        {
+          key: Math.random().toString(36).substring(2, 4) + Math.random().toString(36).substring(2, 4) + 1,
+          inputParameter: '',
+          selectParameter: 1,
+          parameter: 1,
+          unit: 1,
+          children: [],
+        }
+      ]
     });
     setParameterSettings(newParameter);
   };
@@ -92,18 +100,125 @@ const Material = () => {
     setParameterSettings(newParameter);
   };
 
-  const changeSelectParameter = (e: any, index: number) => {
-    const newParameter : any = [...parameterSettings];
-    newParameter[index].settings.selectParameter = e;
-
-    setParameterSettings(newParameter);
+  const removeParam = (key: string, arr: any) => {
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i].key === key) {
+        arr.splice(i, 1);
+        setParameterSettings([...parameterSettings]);
+        break;
+      } else {
+        removeParam(key, arr[i].children);
+      }
+    }
   };
 
-  const changeCommonParameter = (e: any, index: number, field: string) => {
-    const newParameter : any = [...parameterSettings];
-    newParameter[index].settings[field] = e;
+  const recursionSettings = (arr: any[]) => {
+    return arr && arr.length > 0 && arr.map(param => {
+      return (
+        <div className="paramChildren mb-10 mr-10" key={param.key}>
+          <PlusCircleOutlined
+            className="icon-plus mr-20"
+            onClick={() => selectParameters(null, param.key, arr)}
+          />
+          <Input
+            style={{ width: 200 }}
+            className="mb-10 mr-10"
+          />
 
-    setParameterSettings(newParameter);
+          <Select
+            className="mb-10"
+            style={{ width: 150 }}
+            showSearch
+            optionFilterProp="children"
+            filterOption={(input, option: any) => option.children.toLowerCase()
+              .indexOf(input.toLowerCase()) >= 0}
+            onChange={(e) => selectParameters(e, param.key, arr)}
+          >
+            {constants.parameters.map(item => {
+              return (
+                <Option key={item.key} value={item.value}>
+                  {item.text}
+                </Option>
+              )
+            })}
+          </Select>
+
+          {param.children.length === 0  && (
+            <span>
+              <span className="ml-20">
+                Parameter: {' '}
+                <Select
+                  className="mb-10"
+                  style={{ width: 150 }}
+                  showSearch
+                  optionFilterProp="children"
+                  filterOption={(input, option: any) => option.children.toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0}
+                >
+                  {constants.parameterTypes.map(item => {
+                    return (
+                      <Option value={item.value} key={item.key}>
+                        {item.text}
+                      </Option>
+                    );
+                  })}
+                </Select>
+              </span>
+
+              <Select
+                className="ml-20 mb-10"
+                style={{ width: 130 }}
+                showSearch
+                optionFilterProp="children"
+                filterOption={(input, option: any) => option.children.toLowerCase()
+                  .indexOf(input.toLowerCase()) >= 0}
+              >
+                {constants.parameterUnits.map(item => {
+                  return (
+                    <Option value={item.value} key={item.key}>
+                      {item.text}
+                    </Option>
+                  );
+                })}
+              </Select>
+            </span>
+          )}
+          {param.key !== 1 && (
+            <CloseCircleOutlined
+              className="float-right icon-plus mt-5 cl-red"
+              onClick={() => removeParam(param.key, arr)}
+            />
+          )}
+          <div>{recursionSettings(param.children)}</div>
+        </div>
+      );
+    });
+  };
+
+  const selectParameters = (e: any, key: number, arr: any[]) => {
+    if (e === 2 || !e) {
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i].key === key) {
+          const newParam = {
+            key: Math.random().toString(36).substring(2, 4) + Math.random().toString(36).substring(2, 4) + 1,
+            inputParameter: 'Tên phân nhóm',
+            selectParameter: 1,
+            parameter: 1,
+            unit: 1,
+            children: []
+          };
+          if (!e) {
+            arr.push(newParam);
+          } else {
+            arr[i].children.push(newParam);
+          }
+          setParameterSettings([...parameterSettings]);
+          break;
+        } else {
+          selectParameters(e, key, arr[i].children);
+        }
+      }
+    }
   };
 
   return (
@@ -181,10 +296,8 @@ const Material = () => {
         {selectedBusiness === 1 && (
           <Card title="Thiết lập tham biến" className="w-100">
             <Row gutter={24}>
-              <Col span={2}>
-                <PlusCircleOutlined className="icon-plus mt-15" onClick={addParameter} />
-              </Col>
-              <Col span={22}>
+              <PlusCircleOutlined className="icon-plus mt-15" onClick={addParameter} />
+              <Col span={23}>
                 {parameterSettings.length > 0 && parameterSettings.map((item, index: number) => {
                   return (
                     <div key={index} className="mb-10">
@@ -242,71 +355,8 @@ const Material = () => {
                           />
                         )}
                       </div>
-                      <div className="bg-cl-yellow pt-10 pl-30">
-                        <Input
-                          value={item.settings['inputParameter']}
-                          style={{ width: 200 }}
-                          className="mb-10 mr-10"
-                          onChange={(e) => changeCommonParameter(e.target.value, index, 'inputParameter')}
-                        />
-
-                        <Select
-                          style={{ width: 150 }}
-                          value={item.settings['selectParameter']}
-                          showSearch
-                          optionFilterProp="children"
-                          filterOption={(input, option: any) => option.children.toLowerCase()
-                            .indexOf(input.toLowerCase()) >= 0}
-                          onChange={(e) => changeSelectParameter(e, index)}
-                        >
-                          {constants.parameters.map(item => {
-                            return (
-                              <Option key={item.key} value={item.value}>
-                                {item.text}
-                              </Option>
-                            )
-                          })}
-                        </Select>
-
-                        <span className="ml-20">
-                          Parameter: {' '}
-                          <Select
-                            style={{ width: 150 }}
-                            value={item.settings['parameter']}
-                            showSearch
-                            optionFilterProp="children"
-                            filterOption={(input, option: any) => option.children.toLowerCase()
-                              .indexOf(input.toLowerCase()) >= 0}
-                            onChange={(e) => changeCommonParameter(e, index, 'parameter')}
-                          >
-                            {constants.parameterTypes.map(item => {
-                              return (
-                                <Option value={item.value} key={item.key}>
-                                  {item.text}
-                                </Option>
-                              );
-                            })}
-                          </Select>
-                        </span>
-
-                        <Select
-                          className="ml-20"
-                          style={{ width: 130 }}
-                          value={item.settings['unit']}
-                          showSearch
-                          optionFilterProp="children"
-                          filterOption={(input, option: any) => option.children.toLowerCase()
-                            .indexOf(input.toLowerCase()) >= 0}
-                          onChange={(e) => changeCommonParameter(e, index, 'unit')}
-                        >
-                          {constants.parameterUnits.map(item => {
-                            return (
-                              <Option value={item.value} key={item.key}>
-                                {item.text}
-                              </Option>
-                            );
-                          })}
-                        </Select>
+                      <div className="bg-cl-yellow pt-10 pl-10 pb-10">
+                        {recursionSettings(item.settings)}
                       </div>
                     </div>
                   )
